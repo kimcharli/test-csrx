@@ -1,0 +1,42 @@
+---
+version: '3.5'
+services:
+  csrx:
+    container_name: csrx
+    image: hub.juniper.net/security/csrx:19.2R1.8
+    restart: always
+    networks:
+      - mgmt
+      - left
+      - right
+    privileged: true
+    environment:
+      CSRX_SIZE: small
+      CSRX_PORT_NUM: 3
+      CSRX_ROOT_PASSWORD: lab123
+    volumes:
+    - ./csrx-config:/root/config
+
+networks:
+  mgmt:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+  left:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.1.0/24
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: 'true'
+  right:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.2.0/24
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: 'true'
